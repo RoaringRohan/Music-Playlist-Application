@@ -5,7 +5,7 @@ const userSchema = new Schema({
     username: { type: String, required: true },
     emailAddress: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    adminPrivileges: { type: Boolean, required: false },
+    role: { type: String, required: true },
     refreshToken: { type: String}
     
   }, { collection : 'Users' });

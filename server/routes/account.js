@@ -20,7 +20,8 @@ router.post('/register', async (req, res) => {
         const result = await User.create({
             "username": username,
             "emailAddress": emailAddress,
-            "password": password
+            "password": password,
+            "role": "Normal"
         });
 
         res.status(201).json({'success': `New user ${username} created!`});
@@ -44,8 +45,14 @@ router.get('/login', async (req, res) => {
     const crossCheckPassword = await password.localeCompare(findUser.password);
 
     if (crossCheckPassword == 0) {
+        console.log(process.env.ACCESS_TOKEN_SECRET)
         const accessToken = jwt.sign(
-            { "username": findUser.username }, 
+            { 
+                "UserInformation": {
+                    "username": findUser.username,
+                    "role": findUser.role
+                }
+            }, 
             process.env.ACCESS_TOKEN_SECRET, 
             { expiresIn: '300s' }
         );

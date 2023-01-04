@@ -20,8 +20,14 @@ router.get('/', async (req, res) => {
         process.env.REFRESH_TOKEN_SECRET,
         (err, decoded) => {
             if (err || findUser.username !== decoded.username) return res.sendStatus(403);
+            
             const accessToken = jwt.sign(
-                { "username": decoded.username },
+                { 
+                    "UserInformation": {
+                        "username": findUser.username,
+                        "role": findUser.role
+                    }
+                }, 
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: '300s' }
             );
