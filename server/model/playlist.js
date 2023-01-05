@@ -10,8 +10,9 @@ const playlistSchema = new Schema({
     average_rating: { type: String, required: true },
     description: { type: String, required: true },
     list_of_tracks: { type: [String], required: true },
-    visibility: { type: String, required: true}
-    
+    visibility: { type: String, required: true},
+    reviews: { type: [String], required: true }
+
   }, { collection : 'Playlists' });
    
   const Playlist = mongoose.model('Playlist', playlistSchema);

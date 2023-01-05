@@ -79,6 +79,31 @@ router.get('/playlist/view-all', verifyRole("Normal"), async (req, res) => {
     res.send(playlistNames);
 });
 
+router.get('/playlist/view', verifyRole("Normal"), async (req, res) => {
+    const playlistName = req.body.playlistName;
+    const cookies = req.cookies;
+
+    if (!cookies?.jwt) return res.sendStatus(404);
+
+    const refreshToken = cookies.jwt;
+
+    const findUser = await User.findOne({refreshToken: refreshToken}).exec();
+
+    if (!findUser) {
+        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+        return res.sendStatus(404);
+    }
+
+    const desiredPlaylist = await Playlist.findOne({playlist_name: playlistName, creator_username: findUser.username}).exec();
+    
+    if (desiredPlaylist && desiredPlaylist.creator_username == findUser.username) {
+        res.send(desiredPlaylist);
+    }
+    else {
+        res.status(401).json({'message': 'Playlist not found'});
+    }
+});
+
 router.post('/playlist/edit', verifyRole("Normal"), async (req, res) => {
     const playlistName = req.body.playlistName;
     const description = req.body.description;
@@ -144,6 +169,182 @@ router.delete('/playlist/delete', verifyRole("Normal"), async (req, res) => {
         res.status(500).json({'message': err.message});
     }
     
+});
+
+router.post('/playlist/track/add', verifyRole("Normal"), async (req, res) => {
+    const playlistName = req.body.playlistName;
+    const track = req.body.track;
+    const cookies = req.cookies;
+
+    if (!cookies?.jwt) return res.sendStatus(404);
+
+    const refreshToken = cookies.jwt;
+
+    const findUser = await User.findOne({refreshToken: refreshToken}).exec();
+
+    if (!findUser) {
+        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+        return res.sendStatus(404);
+    }
+
+    const desiredPlaylist = await Playlist.findOne({playlist_name: playlistName, creator_username: findUser.username}).exec();
+    
+    if (!desiredPlaylist || track === "") {
+        return res.status(401).json({'message': 'Playlist does not exist/track not inputted.'})
+    }
+
+    if (desiredPlaylist && desiredPlaylist.creator_username == findUser.username) {
+        let trackArray = desiredPlaylist.list_of_tracks;
+        trackArray.push(JSON.stringify(track));
+
+        let [minutes1, seconds1] = desiredPlaylist.total_play_time.split(':').map(str => parseInt(str));
+        let [minutes2, seconds2] = track.track_duration.split(':').map(str => parseInt(str));
+
+        let totalSeconds = seconds1 + seconds2;
+        let extraMinutes = Math.floor(totalSeconds / 60);
+        minutes1 += extraMinutes;
+        totalSeconds %= 60;
+
+        minutes1 += minutes2;
+
+        const totalTime = `${minutes1}:${totalSeconds.toString().padStart(2, '0')}`;
+
+        let num = parseInt(desiredPlaylist.number_of_tracks);
+        num++;
+        
+        desiredPlaylist.list_of_tracks = trackArray;
+        desiredPlaylist.created_at = new Date();
+        desiredPlaylist.number_of_tracks = num.toString();
+        desiredPlaylist.total_play_time = totalTime;
+        const result = await desiredPlaylist.save();
+
+        return res.status(200).json({'message': 'Added track to playlist.'});
+    }
+});
+
+router.delete('/playlist/track/delete', verifyRole("Normal"), async (req, res) => {
+    const playlistName = req.body.playlistName;
+    const track = req.body.track;
+    const cookies = req.cookies;
+
+    if (!cookies?.jwt) return res.sendStatus(404);
+
+    const refreshToken = cookies.jwt;
+
+    const findUser = await User.findOne({refreshToken: refreshToken}).exec();
+
+    if (!findUser) {
+        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+        return res.sendStatus(404);
+    }
+
+    const desiredPlaylist = await Playlist.findOne({playlist_name: playlistName, creator_username: findUser.username}).exec();
+    
+    if (!desiredPlaylist || track === "") {
+        return res.status(401).json({'message': 'Playlist does not exist/track not inputted.'})
+    }
+
+    if (desiredPlaylist && desiredPlaylist.creator_username == findUser.username) {
+        try {
+            let trackArray = desiredPlaylist.list_of_tracks;
+            for (let i = 0; i < trackArray.length; i ++) {
+                if (JSON.parse(trackArray[i]).track_title == track.track_title) {
+                    trackArray.splice(i, 1);
+                }
+            }
+            
+            let [minutes1, seconds1] = desiredPlaylist.total_play_time.split(':').map(str => parseInt(str));
+            let [minutes2, seconds2] = track.track_duration.split(':').map(str => parseInt(str));
+
+            let totalSeconds = seconds1 - seconds2;
+            let extraMinutes = Math.floor(totalSeconds / 60);
+            minutes1 -= extraMinutes;
+            totalSeconds %= 60;
+
+            minutes1 -= minutes2;
+
+            if (totalSeconds < 0) {
+            totalSeconds += 60;
+            minutes1--;
+            }
+
+            if (minutes1 < 0) {
+            minutes1 += 60;
+            hours--;
+            }
+
+            const totalTime = `${minutes1}:${totalSeconds.toString().padStart(2, '0')}`;
+
+            let num = parseInt(desiredPlaylist.number_of_tracks);
+            num--;
+
+            desiredPlaylist.list_of_tracks = trackArray;
+            desiredPlaylist.number_of_tracks = num.toString();
+            desiredPlaylist.total_play_time = totalTime;
+            desiredPlaylist.created_at = new Date();
+            const result = await desiredPlaylist.save();
+
+            return res.status(200).json({'message': 'Deleted song from playlist.'});
+        } catch (err) {
+            res.status(500).json({'message': err.message});
+        }
+    }
+});
+
+router.post('/playlist/review/add', verifyRole("Normal"), async (req, res) => {
+    const playlistName = req.body.playlistName;
+    const playlistOwner = req.body.playlistOwner;
+    const comment = req.body.comment;
+    const rating = req.body.rating;
+    const cookies = req.cookies;
+
+    if (!cookies?.jwt) return res.sendStatus(404);
+
+    const refreshToken = cookies.jwt;
+
+    const findUser = await User.findOne({refreshToken: refreshToken}).exec();
+
+    if (!findUser) {
+        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+        return res.sendStatus(404);
+    }
+
+    const desiredPlaylist = await Playlist.findOne({playlist_name: playlistName, creator_username: playlistOwner}).exec();
+    
+    if (!desiredPlaylist) {
+        return res.status(401).json({'message': 'Playlist does not exist.'})
+    }
+
+    if (desiredPlaylist.visibility == "Private") {
+        return res.status(401).json({'message': 'Sorry this playlist is not public so you cannot add a review to this.'})
+    }
+
+    if (desiredPlaylist && desiredPlaylist.creator_username == playlistOwner && rating !== "" && desiredPlaylist.visibility == "Public") {
+        let reviewsArray = desiredPlaylist.reviews;
+
+        const review = {
+            "rating": rating,
+            "comment": comment,
+            "reviewer": findUser.username,
+            "date": new Date()
+        }
+        reviewsArray.push(JSON.stringify(review));
+
+        let total = 0;
+        for (let i = 0; i < reviewsArray.length; i ++) {
+            total += parseInt(JSON.parse(reviewsArray[i]).rating);
+        }
+        let calcAvg = (total)/(reviewsArray.length)
+        
+        desiredPlaylist.average_rating = calcAvg.toString();
+        desiredPlaylist.reviews = reviewsArray;
+        const result = await desiredPlaylist.save();
+
+        return res.status(200).json({'message': 'Added track to playlist.'});
+    }
+    else {
+        return res.status(401).json({'message': 'Empty field/could not find public playlist.'});
+    }
 });
 
 module.exports = router;
