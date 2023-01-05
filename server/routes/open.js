@@ -3,9 +3,6 @@ const { default: mongoose } = require('mongoose');
 const { find } = require('../model/track');
 const router = express.Router();
 
-// router.get('/checking', async (req, res) => {
-//     res.sendStatus(200);
-// })
 const Track = require('../model/track');
 router.get('/tracks', async (req, res) => {
     const artist_name = req.body.artist_name;

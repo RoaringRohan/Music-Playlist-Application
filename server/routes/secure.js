@@ -326,7 +326,8 @@ router.post('/playlist/review/add', verifyRole("Normal"), async (req, res) => {
             "rating": rating,
             "comment": comment,
             "reviewer": findUser.username,
-            "date": new Date()
+            "date": new Date(),
+            "visibility": "show"
         }
         reviewsArray.push(JSON.stringify(review));
 
@@ -340,7 +341,7 @@ router.post('/playlist/review/add', verifyRole("Normal"), async (req, res) => {
         desiredPlaylist.reviews = reviewsArray;
         const result = await desiredPlaylist.save();
 
-        return res.status(200).json({'message': 'Added track to playlist.'});
+        return res.status(200).json({'message': 'Added review to playlist.'});
     }
     else {
         return res.status(401).json({'message': 'Empty field/could not find public playlist.'});

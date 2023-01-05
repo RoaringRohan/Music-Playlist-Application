@@ -23,6 +23,7 @@ router.post('/register', async (req, res) => {
 
     try {
         const result = await User.create({
+            "usage": "active",
             "username": username,
             "emailAddress": emailAddress,
             "password": password,
@@ -45,12 +46,11 @@ router.get('/login', async (req, res) => {
     const findUser = await User.findOne({emailAddress: emailAddress}).exec();
 
     if (!findUser) return res.status(401).json({'message': 'Username/Password was incorrect.'});
-    if (findUser.username === 'deactivated') return res.status(401).json({'message': 'Account has been deactivated, contact admin to log in.'})
+    if (findUser.usage === 'deactivated') return res.status(401).json({'message': 'Account has been deactivated, contact admin to log in.'})
 
     const crossCheckPassword = await password.localeCompare(findUser.password);
 
     if (crossCheckPassword == 0) {
-        console.log(process.env.ACCESS_TOKEN_SECRET)
         const accessToken = jwt.sign(
             { 
                 "UserInformation": {
@@ -71,7 +71,7 @@ router.get('/login', async (req, res) => {
         const result = await findUser.save();
 
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000 });
-        res.json({ accessToken });
+        res.json({ accessToken, "role": findUser.role });
     }
     else return res.status(401).json({'message': 'Username/Password was incorrect.'});
 });
@@ -93,7 +93,6 @@ router.post('/update-password', async (req, res) => {
     
     findUser.password = newPassword;
     const result = await findUser.save();
-    console.log(result);
 
     res.sendStatus(204);
 });
@@ -114,7 +113,6 @@ router.get('/logout', async (req, res) => {
     
     findUser.refreshToken = '';
     const result = await findUser.save();
-    console.log(result);
 
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
     res.sendStatus(204);
@@ -137,7 +135,6 @@ router.get('/deactivate', async (req, res) => {
     findUser.username = 'deactivated';
     findUser.refreshToken = '';
     const result = await findUser.save();
-    console.log(result);
 
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
     res.sendStatus(204);
