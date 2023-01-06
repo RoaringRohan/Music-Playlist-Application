@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const { default: mongoose } = require('mongoose');
 const { find } = require('../model/user');
 const router = express.Router();
@@ -22,15 +23,64 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        const result = await User.create({
-            "usage": "active",
-            "username": username,
-            "emailAddress": emailAddress,
-            "password": password,
-            "role": "Normal"
+
+        const transport = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USERNAME,
+                pass: process.env.PASSWORD
+            }
         });
 
-        res.status(201).json({'success': `New user ${username} created!`});
+        const token = jwt.sign(
+            { 
+                "UserInformation": {
+                    "username": username,
+                    "emailAddress": emailAddress,
+                    "password": password
+                }
+            },
+            process.env.ACCESS_TOKEN_SECRET, 
+            { expiresIn: '1d' }
+        );
+
+        const mailConfiguration = {
+            from: 'rohanstesting@gmail.com',
+            to: emailAddress,
+            subject: 'Email Verification',
+            text: `Hi! There, You have created an account with us. Please follow the given link to verify your email, this link expires in 1 day!
+                   http://localhost:3000/api/account/verify/${token} 
+                   Thanks`
+        };
+
+        transport.sendMail(mailConfiguration, function(error, info){
+            if (error) throw Error(error);
+            console.log(info);
+            res.sendStatus(200).json({'message': 'Email Sent Successfully'})
+        });
+
+    } catch (err) {
+        res.status(500).json({'message': err.message});
+    }
+});
+
+router.get('/verify/:token', async (req, res) => {
+    const {token} = req.params;
+
+    try {
+        await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded) {
+            if (err) return res.status(403).json({'message': 'Email verification failed, possibly the link is invalid or expired'});
+            
+            const result = await User.create({
+                "usage": "active",
+                "username": decoded.UserInformation.username,
+                "emailAddress": decoded.UserInformation.emailAddress,
+                "password": decoded.UserInformation.password,
+                "role": "Normal"
+            });
+        });
+    
+        return res.status(201).json({'success': `New user created!`});
     } catch (err) {
         res.status(500).json({'message': err.message});
     }
