@@ -89,7 +89,7 @@ router.get('/verify/:token', async (req, res) => {
     }
 });
 
-router.get('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const emailAddress = req.body.emailAddress;
     const password = req.body.password;
 
@@ -98,7 +98,7 @@ router.get('/login', async (req, res) => {
 
     const findUser = await User.findOne({emailAddress: emailAddress}).exec();
 
-    if (!findUser) return res.status(401).json({'message': 'Username/Password was incorrect.'});
+    if (!findUser) return res.status(401).json({'message': 'Email Address/Password was incorrect.'});
     if (findUser.usage === 'deactivated') return res.status(401).json({'message': 'Account has been deactivated, contact admin to log in.'})
 
     const crossCheckPassword = await bcrypt.compare(password, findUser.password);
