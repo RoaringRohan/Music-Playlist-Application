@@ -1,9 +1,14 @@
 const express = require('express');
 const { default: mongoose } = require('mongoose');
 const { find } = require('../model/track');
+const Track = require('../model/track');
+const Playlist = require('../model/playlist');
+const SecurityPrivacyPolicy = require('../model/securityPrivacyPolicy');
+const DmcaNoticeTakedownPolicy = require('../model/dmcaNoticeTakedownPolicy');
+const AcceptableUsePolicy = require('../model/acceptableUsePolicy');
 const router = express.Router();
 
-const Track = require('../model/track');
+
 router.get('/tracks', async (req, res) => {
     const artist_name = req.body.artist_name;
     const track_genres = req.body.track_genres;
@@ -45,7 +50,6 @@ router.get('/tracks', async (req, res) => {
     });
 });
 
-const Playlist = require('../model/playlist');
 router.get('/playlists', async (req, res) => {
     await Playlist.find({ is_public: true }, 'playlist_name creator_username number_of_tracks total_play_time average_rating description list_of_tracks')
       .sort({ created_at: -1 })
@@ -58,7 +62,36 @@ router.get('/playlists', async (req, res) => {
         }
         res.send(playlists);
       });
-  });
+});
+
+router.get('/security-and-privacy-policy', async (req, res) => {
+  try {
+      const policies = await SecurityPrivacyPolicy.find();
   
+      res.json(policies);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+});
+
+router.get('/dmca-notice-and-takedown-policy', async (req, res) => {
+  try {
+      const policies = await DmcaNoticeTakedownPolicy.find();
+  
+      res.json(policies);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+});
+
+router.get('/acceptable-use-policy', async (req, res) => {
+  try {
+      const policies = await AcceptableUsePolicy.find();
+  
+      res.json(policies);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+});
 
 module.exports = router;
