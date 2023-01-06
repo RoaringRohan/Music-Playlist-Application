@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const { default: mongoose } = require('mongoose');
 const { find } = require('../model/user');
@@ -24,6 +25,8 @@ router.post('/register', async (req, res) => {
 
     try {
 
+        const hashed = await bcrypt.hash(password, 10);
+
         const transport = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -37,7 +40,7 @@ router.post('/register', async (req, res) => {
                 "UserInformation": {
                     "username": username,
                     "emailAddress": emailAddress,
-                    "password": password
+                    "password": hashed
                 }
             },
             process.env.ACCESS_TOKEN_SECRET, 
@@ -98,9 +101,9 @@ router.get('/login', async (req, res) => {
     if (!findUser) return res.status(401).json({'message': 'Username/Password was incorrect.'});
     if (findUser.usage === 'deactivated') return res.status(401).json({'message': 'Account has been deactivated, contact admin to log in.'})
 
-    const crossCheckPassword = await password.localeCompare(findUser.password);
+    const crossCheckPassword = await bcrypt.compare(password, findUser.password);
 
-    if (crossCheckPassword == 0) {
+    if (crossCheckPassword) {
         const accessToken = jwt.sign(
             { 
                 "UserInformation": {
@@ -141,7 +144,9 @@ router.post('/update-password', async (req, res) => {
         return res.sendStatus(404);
     }
     
-    findUser.password = newPassword;
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    findUser.password = hashed;
     const result = await findUser.save();
 
     res.sendStatus(204);
