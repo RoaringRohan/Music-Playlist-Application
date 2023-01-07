@@ -15,14 +15,12 @@ export class LoginComponent {
   constructor(private router: Router, private http: HttpClient) {}
 
   login() {
-    // Here is where you would make an HTTP request to the backend API.
-    // The API URL and any necessary headers are typically configured
-    // in a separate service.
     const body = {
       emailAddress: this.email,
       password: this.password
     };
     this.http.post('/api/account/login', body).subscribe(response => {
+      this.errorMessage = '';
       this.router.navigate(['/user-homepage']);
     }, error => {
       this.errorMessage = error.error.message;

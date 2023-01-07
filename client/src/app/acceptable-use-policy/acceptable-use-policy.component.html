@@ -1,0 +1,16 @@
+<div class="container">
+  <h1>Acceptable Use Policies</h1>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+  <div *ngFor="let policy of policies">
+    <h3>{{policy._id}}</h3>
+    <p>Introduction: {{policy.introduction}}</p>
+    <p>Scope: {{policy.scope}}</p>
+    <p>Prohibited Activities: {{policy.prohibited_activities}}</p>
+    <p>Compliance with Laws: {{policy.compliance_with_laws}}</p>
+    <p>Security: {{policy.security}}</p>
+    <p>Monitoring and Enforcement: {{policy.monitoring_and_enforcement}}</p>
+    <p>Changes to Policy: {{policy.changes_to_policy}}</p>
+    <p>Contact Information: {{policy.contact_information}}</p>
+    <p>Date: {{policy.date}}</p>
+  </div>
+</div>

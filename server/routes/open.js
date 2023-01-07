@@ -9,7 +9,7 @@ const AcceptableUsePolicy = require('../model/acceptableUsePolicy');
 const router = express.Router();
 
 
-router.get('/tracks', async (req, res) => {
+router.post('/tracks', async (req, res) => {
     const artist_name = req.body.artist_name;
     const track_genres = req.body.track_genres;
     const track_title = req.body.track_title;

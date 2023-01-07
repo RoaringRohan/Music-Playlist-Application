@@ -13,6 +13,11 @@ router.post('/register', async (req, res) => {
     const emailAddress = req.body.emailAddress;
     const password = req.body.password;
 
+    var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (!validRegex.test(emailAddress)) {
+        return res.status(401).json({'message': 'Not a valid email address.'});
+    }
+
     const checkDuplicateEmail = await User.findOne({emailAddress: emailAddress}).exec();
     if (checkDuplicateEmail) {
         return res.status(409).json({'message': 'Account with this email already exists.'});
@@ -56,7 +61,7 @@ router.post('/register', async (req, res) => {
                    Thanks`
         };
 
-        transport.sendMail(mailConfiguration, function(error, info){
+        await transport.sendMail(mailConfiguration, function(error, info){
             if (error) throw Error(error);
             console.log(info);
             res.sendStatus(200).json({'message': 'Email Sent Successfully'})
@@ -93,7 +98,7 @@ router.post('/login', async (req, res) => {
     const emailAddress = req.body.emailAddress;
     const password = req.body.password;
 
-    if (!emailAddress) return res.status(400).json({'message': 'Username not entered.'});
+    if (!emailAddress) return res.status(400).json({'message': 'Email Address not entered.'});
     else if (!password) return res.status(400).json({'message': 'Password not entered.'});
 
     const findUser = await User.findOne({emailAddress: emailAddress}).exec();

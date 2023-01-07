@@ -1,0 +1,14 @@
+<div class="container">
+  <h1>DMCA Notice and Takedown Policies</h1>
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+  <div *ngFor="let policy of policies">
+    <h3>{{policy._id}}</h3>
+    <p>Introduction: {{policy.introduction}}</p>
+    <p>Copyright Ownership: {{policy.copyright_ownership}}</p>
+    <p>Infringed Material: {{policy.infringed_material}}</p>
+    <p>Process: {{policy.process}}</p>
+    <p>Disclaimer: {{policy.disclaimer}}</p>
+    <p>Contact Information: {{policy.contact_information}}</p>
+    <p>Date: {{policy.date}}</p>
+  </div>
+</div>
