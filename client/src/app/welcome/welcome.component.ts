@@ -10,7 +10,7 @@ export class WelcomeComponent {
   constructor(private router: Router) {}
 
   goToHomepage() {
-    this.router.navigate(['/homepage']);
+    this.router.navigate(['/non-user-homepage']);
   }
 
   goToLogin() {
