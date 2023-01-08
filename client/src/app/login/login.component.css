@@ -1,3 +1,12 @@
+@font-face {
+  font-family: "Poppins";
+  src: url(../../assets/Poppins-SemiBoldItalic.ttf) format('truetype');
+}
+
+* {
+  font-family: Poppins;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -16,8 +25,8 @@ button[type='submit'] {
   padding: 0.5rem 1rem;
   background-color: blue;
   color: white;
-  border: none;
-  border-radius: 0.25rem;
+  border: 10px;
+  border-radius: 10rem;
   cursor: pointer;
 }
 
