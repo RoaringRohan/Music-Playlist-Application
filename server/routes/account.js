@@ -129,6 +129,8 @@ router.post('/login', async (req, res) => {
         const result = await findUser.save();
 
         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000 });
+        
+        //res.cookie('jwt-access', accessToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24*60*60*1000 });
         res.json({ accessToken, "role": findUser.role });
     }
     else return res.status(401).json({'message': 'Username/Password was incorrect.'});

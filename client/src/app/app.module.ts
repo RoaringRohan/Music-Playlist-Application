@@ -13,6 +13,12 @@ import { UserHomepageComponent } from './user-homepage/user-homepage.component';
 import { SecurityPrivacyPolicyComponent } from './security-privacy-policy/security-privacy-policy.component';
 import { AcceptableUsePolicyComponent } from './acceptable-use-policy/acceptable-use-policy.component';
 import { DmcaNoticeTakedownPolicyComponent } from './dmca-notice-takedown-policy/dmca-notice-takedown-policy.component';
+import { NonUserHomepageComponent } from './non-user-homepage/non-user-homepage.component';
+import { QueryTrackComponent } from './query-track/query-track.component';
+import { TopPlaylistsComponent } from './top-playlists/top-playlists.component';
+import { CreatePlaylistComponent } from './create-playlist/create-playlist.component';
+import { DeletePlaylistComponent } from './delete-playlist/delete-playlist.component';
+import { AddReviewComponent } from './add-review/add-review.component';
 
 const routes: Routes = [
   { path: '', component: WelcomeComponent },
@@ -20,7 +26,14 @@ const routes: Routes = [
   { path: 'create-account', component: CreateAccountComponent },
   { path: 'security-privacy-policy', component: SecurityPrivacyPolicyComponent },
   { path: 'dmca-notice-takedown-policy', component: DmcaNoticeTakedownPolicyComponent },
-  { path: 'acceptable-use-policy', component: AcceptableUsePolicyComponent }
+  { path: 'acceptable-use-policy', component: AcceptableUsePolicyComponent },
+  { path: 'non-user-homepage', component: NonUserHomepageComponent},
+  { path: 'query-track', component: QueryTrackComponent},
+  { path: 'top-playlists', component: TopPlaylistsComponent},
+  { path: 'user-homepage', component: UserHomepageComponent},
+  { path: 'create-playlist', component: CreatePlaylistComponent},
+  { path: 'delete-playlist', component: DeletePlaylistComponent},
+  { path: 'add-review', component: AddReviewComponent}
 ];
 
 @NgModule({
@@ -32,7 +45,13 @@ const routes: Routes = [
     UserHomepageComponent,
     SecurityPrivacyPolicyComponent,
     AcceptableUsePolicyComponent,
-    DmcaNoticeTakedownPolicyComponent
+    DmcaNoticeTakedownPolicyComponent,
+    NonUserHomepageComponent,
+    QueryTrackComponent,
+    TopPlaylistsComponent,
+    CreatePlaylistComponent,
+    DeletePlaylistComponent,
+    AddReviewComponent
   ],
   imports: [
     BrowserModule,

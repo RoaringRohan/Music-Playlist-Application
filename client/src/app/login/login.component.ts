@@ -19,12 +19,15 @@ export class LoginComponent {
       emailAddress: this.email,
       password: this.password
     };
-    this.http.post('/api/account/login', body).subscribe(response => {
-      this.errorMessage = '';
-      this.router.navigate(['/user-homepage']);
-    }, error => {
-      this.errorMessage = error.error.message;
-    });
+    this.http.post('/api/account/login', body).subscribe(
+      (response: any) => {
+        this.errorMessage = '';
+        localStorage.setItem('accessToken', response.accessToken);
+        this.router.navigate(['/user-homepage']);
+      },
+      (error) => {
+        this.errorMessage = error.error.message;
+      });
   }
 
   goToSignup() {

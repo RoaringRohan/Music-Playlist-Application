@@ -198,7 +198,8 @@ router.post('/playlist/track/add', verifyRole("Normal"), async (req, res) => {
         trackArray.push(JSON.stringify(track));
 
         let [minutes1, seconds1] = desiredPlaylist.total_play_time.split(':').map(str => parseInt(str));
-        let [minutes2, seconds2] = track.track_duration.split(':').map(str => parseInt(str));
+
+        let [minutes2, seconds2] = track[0].track_duration.split(':').map(str => parseInt(str));
 
         let totalSeconds = seconds1 + seconds2;
         let extraMinutes = Math.floor(totalSeconds / 60);
