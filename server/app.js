@@ -25,11 +25,13 @@ const connectDB = async () => {
 
 connectDB();
 
+// Handles all requests without requiring login
 app.use('/api/account/', require('./routes/account'));
 app.use('/api/refresh', require('./routes/refresh'));
 app.use('/api/open/', require('./routes/open'));
 
 
+// Handles all requests with requirement of login
 app.use(checkJWT);
 app.use('/api/secure/', require('./routes/secure'));
 app.use('/api/admin/', require('./routes/admin'));

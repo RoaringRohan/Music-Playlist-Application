@@ -6,6 +6,7 @@ const AssignPlaylist = require('../model/assignPlaylist');
 const Playlist = require('../model/playlist');
 const User = require('../model/user');
 
+// All these endpoints require normal user sign in, and they allow user to create/edit/delete playlists, add/remove songs, and add reviews
 router.post('/playlist/new', verifyRole("Normal"), async (req, res) => {
     const playlistName = req.body.playlistName;
     const description = req.body.description;

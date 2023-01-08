@@ -8,7 +8,7 @@ const DmcaNoticeTakedownPolicy = require('../model/dmcaNoticeTakedownPolicy');
 const AcceptableUsePolicy = require('../model/acceptableUsePolicy');
 const router = express.Router();
 
-
+//All these routes are accessible without needing to sign in, it displays the top playlists and the policies and allows people to search tracks
 router.post('/tracks', async (req, res) => {
     const artist_name = req.body.artist_name;
     const track_genres = req.body.track_genres;

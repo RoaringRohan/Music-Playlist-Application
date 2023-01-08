@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+// Ensures that the correct user is being accessed
 const checkJWT = (req, res, next) => {
     const header = req.headers.authorization || req.headers.Authorization;
     if (!header?.startsWith('Bearer ')) return res.sendStatus(401);

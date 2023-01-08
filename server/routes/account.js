@@ -8,6 +8,7 @@ const router = express.Router();
 
 const User = require('../model/user');
 
+// These routes do not require authentication because you need these routes to make accounts/login, etc.
 router.post('/register', async (req, res) => {
     const username = req.body.username;
     const emailAddress = req.body.emailAddress;

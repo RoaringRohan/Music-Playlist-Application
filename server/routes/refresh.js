@@ -5,6 +5,7 @@ const router = express.Router();
 
 const User = require('../model/user');
 
+// Ensures the cookie can be refreshed into a new jwt token
 router.get('/', async (req, res) => {
     const cookies = req.cookies;
 

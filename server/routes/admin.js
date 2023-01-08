@@ -8,6 +8,7 @@ const SecurityPrivacyPolicy = require('../model/securityPrivacyPolicy');
 const DmcaNoticeTakedownPolicy = require('../model/dmcaNoticeTakedownPolicy');
 const AcceptableUsePolicy = require('../model/acceptableUsePolicy');
 
+// Routes here only allowed for admins, also they allow admin to deactivate/activate users, disable/enable reviews, and create/edit policies
 router.post('/grant-privilege', verifyRole("Admin"), async (req, res) => {
     const emailAddress = req.body.emailAddress;
 
