@@ -19,6 +19,7 @@ import { TopPlaylistsComponent } from './top-playlists/top-playlists.component';
 import { CreatePlaylistComponent } from './create-playlist/create-playlist.component';
 import { DeletePlaylistComponent } from './delete-playlist/delete-playlist.component';
 import { AddReviewComponent } from './add-review/add-review.component';
+import { AdminHomepageComponent } from './admin-homepage/admin-homepage.component';
 
 const routes: Routes = [
   { path: '', component: WelcomeComponent },
@@ -33,7 +34,8 @@ const routes: Routes = [
   { path: 'user-homepage', component: UserHomepageComponent},
   { path: 'create-playlist', component: CreatePlaylistComponent},
   { path: 'delete-playlist', component: DeletePlaylistComponent},
-  { path: 'add-review', component: AddReviewComponent}
+  { path: 'add-review', component: AddReviewComponent},
+  { path: 'admin-homepage', component: AdminHomepageComponent}
 ];
 
 @NgModule({
@@ -51,7 +53,8 @@ const routes: Routes = [
     TopPlaylistsComponent,
     CreatePlaylistComponent,
     DeletePlaylistComponent,
-    AddReviewComponent
+    AddReviewComponent,
+    AdminHomepageComponent
   ],
   imports: [
     BrowserModule,

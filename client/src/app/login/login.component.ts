@@ -23,7 +23,12 @@ export class LoginComponent {
       (response: any) => {
         this.errorMessage = '';
         localStorage.setItem('accessToken', response.accessToken);
-        this.router.navigate(['/user-homepage']);
+        if (response.role == "Normal") {
+          this.router.navigate(['/user-homepage']);
+        }
+        else if (response.role == "Admin") {
+          this.router.navigate(['/admin-homepage']);
+        }
       },
       (error) => {
         this.errorMessage = error.error.message;
